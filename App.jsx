@@ -93,16 +93,25 @@ export default function App() {
 
   useEffect(()=>{
     const ch = supabase.channel("live")
-      .on("postgres_changes",{event:"*",schema:"public",table:"pedidos"},cargar)
+      .on("postgres_changes",{event:"UPDATE",schema:"public",table:"pedidos"},payload=>{
+        setPedidos(prev => prev.map(p => p.id === payload.new.id ? { ...p, ...payload.new } : p));
+        setModal(m => m && m.id === payload.new.id ? { ...m, ...payload.new } : m);
+      })
+      .on("postgres_changes",{event:"INSERT",schema:"public",table:"pedidos"},()=>{
+        supabase.from("pedidos_resumen").select("*").eq("tenant_id",TENANT_ID)
+          .order("fecha_recogida").order("hora_recogida")
+          .then(({data})=>{ if(data) setPedidos(data); });
+      })
       .subscribe();
     return ()=>supabase.removeChannel(ch);
-  },[cargar]);
+  },[]);
 
   const cambiar = async (id, campos) => {
     const {error} = await supabase.from("pedidos").update(campos).eq("id",id);
     if(error){showToast("Error al actualizar","error");return;}
-    showToast("Actualizado ✅"); await cargar();
+    setPedidos(prev => prev.map(p => p.id === id ? { ...p, ...campos } : p));
     if(modal?.id===id) setModal(p=>({...p,...campos}));
+    showToast("Actualizado ✅");
   };
 
   // Toggle recordatorios
