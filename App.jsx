@@ -42,6 +42,25 @@ const PAGO_LABELS = {
   online:   "📲 Online",
 };
 
+// ── Logo Pedidone ──────────────────────────────────────────────
+function PedidoneLogo({ size = 28, color = "#fff", accent = "#1FB86A" }) {
+  return (
+    <div style={{ fontFamily: "'Hanken Grotesk', system-ui, sans-serif", fontSize: size, fontWeight: 800, letterSpacing: "-0.048em", lineHeight: 1, color, whiteSpace: "nowrap" }}>
+      <span style={{ fontWeight: 300 }}>Pedi</span>
+      <span style={{ letterSpacing: 0 }}>d</span>
+      <svg viewBox="0 0 120 120" aria-hidden="true" style={{ width: "0.6em", height: "0.6em", display: "inline-block", verticalAlign: "-0.07em", margin: "0 0.01em" }}>
+        <circle cx="60" cy="56" r="52" fill={accent} />
+        <path d="M22 88 L14 116 L48 104 Z" fill={accent} />
+        <g transform="translate(4,-1)" fill="none" stroke="#fff" strokeWidth="9" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M28 60 L40 72 L66 42" />
+          <path d="M53 67 L58 72 L84 42" />
+        </g>
+      </svg>
+      ne
+    </div>
+  );
+}
+
 // ── Componentes ────────────────────────────────────────────────
 const Badge = ({estado}) => {
   const e=ESTADOS[estado]||ESTADOS.pendiente;
@@ -165,8 +184,8 @@ export default function App() {
       {/* SIDEBAR */}
       <aside style={{width:215,background:"#0f172a",display:"flex",flexDirection:"column",position:"fixed",top:0,left:0,bottom:0,zIndex:50}}>
         <div style={{padding:"22px 18px 16px",borderBottom:"1px solid rgba(255,255,255,.07)"}}>
-          <div style={{fontSize:18,fontWeight:800,color:"#fff"}}>🤖 OrderBot</div>
-          <div style={{fontSize:11,color:"rgba(255,255,255,.35)",marginTop:3}}>{tenant?.nombre||"Panel de pedidos"}</div>
+          <PedidoneLogo size={28} />
+          <div style={{fontSize:11,color:"rgba(255,255,255,.35)",marginTop:6}}>{tenant?.nombre||"Panel de pedidos"}</div>
           {tenant?.recordatorios_activos&&<div style={{marginTop:6,fontSize:10,background:"#16a34a22",color:"#4ade80",padding:"2px 8px",borderRadius:10,display:"inline-block",fontWeight:700}}>🔔 Recordatorios ON</div>}
         </div>
         <nav style={{flex:1,padding:"10px 8px",overflowY:"auto"}}>
@@ -178,7 +197,7 @@ export default function App() {
           )}
         </nav>
         <div style={{padding:"10px 10px 16px",borderTop:"1px solid rgba(255,255,255,.07)"}}>
-          <div style={{fontSize:11,color:"rgba(255,255,255,.3)",textAlign:"center"}}>v5.0 · {tenant?.nombre}</div>
+          <div style={{fontSize:11,color:"rgba(255,255,255,.3)",textAlign:"center"}}>Pedidone v5.0 · pedidone.es</div>
         </div>
       </aside>
 
