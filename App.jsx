@@ -183,25 +183,28 @@ function MasterPanel({onLogout}) {
 
   useEffect(() => { cargar(); }, [cargar]);
 
-  const crearCliente = async () => {
-    if (!form.nombre||!form.telefono||!form.email||!form.pass) { showToast("Rellena todos los campos obligatorios","error"); return; }
+const crearCliente = async () => {
+    if (!form.nombre||!form.telefono||!form.email||!form.pass) {
+      showToast("Rellena todos los campos obligatorios","error"); return;
+    }
     setLoading(true);
     try {
-      // 1. Crear tenant
-      const { data: tenant, error: tErr } = await supabase.from("tenants").insert({
-        nombre: form.nombre,
-        telefono_negocio: form.telefono,
-        whatsapp_phone_id: form.phone_id || "PENDIENTE",
-        whatsapp_token: form.token || "PENDIENTE",
-        mensaje_bienvenida: form.bienvenida || `¡Bienvenido/a a *${form.nombre}*! Aquí puedes hacer tu pedido fácilmente.`,
-        pago_online_activo: false,
-        recordatorios_activos: false,
-      }).select().single();
-      if (tErr) throw tErr;
-
-      // 2. Crear usuario en Supabase Auth via Admin API (necesita service_role en backend)
-      // Por ahora lo creamos manualmente y vinculamos
-      showToast(`✅ Tenant "${form.nombre}" creado. Crea el usuario en Supabase Auth y vincúlalo.`);
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/admin/crear-cliente`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_MASTER_SECRET}`,
+        },
+        body: JSON.stringify({
+          nombre: form.nombre, telefono: form.telefono,
+          phone_id: form.phone_id, token: form.token,
+          email: form.email, pass: form.pass,
+          bienvenida: form.bienvenida,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      showToast(`✅ Cliente "${form.nombre}" creado correctamente`);
       setForm({ nombre:"", telefono:"", phone_id:"", token:"", email:"", pass:"", bienvenida:"" });
       setVista("tenants");
       await cargar();
