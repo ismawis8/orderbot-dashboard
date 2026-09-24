@@ -63,7 +63,7 @@ function LoginPage({onLogin}) {
   return (
     <div style={{minHeight:"100vh",background:"#0f172a",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Segoe UI',system-ui,sans-serif"}}>
       <div style={{background:"#1e293b",borderRadius:16,padding:"44px 40px",width:"100%",maxWidth:400,boxShadow:"0 20px 60px rgba(0,0,0,.4)"}}>
-        <div style={{fontSize:28,fontWeight:800,color:"#fff",marginBottom:4}}>🤖 Pedidone</div>
+        <img src="/logo.png" alt="Pedidone" style={{height:40,marginBottom:4}}/>
         <div style={{color:"rgba(255,255,255,.4)",fontSize:13,marginBottom:32}}>Panel de gestión de pedidos</div>
 
         <label style={{display:"block",fontSize:12,fontWeight:600,color:"rgba(255,255,255,.5)",marginBottom:6}}>Email</label>
@@ -227,7 +227,7 @@ const crearCliente = async () => {
       {/* Header */}
       <div style={{background:"#0f172a",padding:"16px 28px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
         <div>
-          <span style={{color:"#fff",fontWeight:800,fontSize:18}}>🤖 Pedidone</span>
+          <img src="/logo.png" alt="Pedidone" style={{height:32,filter:"brightness(0) invert(1)"}}/>
           <span style={{color:"rgba(255,255,255,.4)",fontSize:13,marginLeft:12}}>Panel Master</span>
         </div>
         <div style={{display:"flex",gap:10,alignItems:"center"}}>
@@ -438,7 +438,7 @@ function Dashboard({tenantId, onLogout}) {
 
       <aside style={{width:215,background:"#0f172a",display:"flex",flexDirection:"column",position:"fixed",top:0,left:0,bottom:0,zIndex:50}}>
         <div style={{padding:"22px 18px 16px",borderBottom:"1px solid rgba(255,255,255,.07)"}}>
-          <div style={{fontSize:16,fontWeight:800,color:"#fff"}}>🤖 {tenant?.nombre||"Panel"}</div>
+          <div style={{display:"flex",alignItems:"center",gap:8}}>   <img src="/logo.png" alt="Pedidone" style={{height:24,filter:"brightness(0) invert(1)"}}/>   <span style={{fontSize:13,color:"rgba(255,255,255,.7)",fontWeight:600}}>{tenant?.nombre||"Panel"}</span> </div>
           <div style={{fontSize:10,color:"rgba(255,255,255,.35)",marginTop:3}}>Panel de pedidos</div>
           {tenant?.recordatorios_activos&&<div style={{marginTop:6,fontSize:10,background:"#16a34a22",color:"#4ade80",padding:"2px 8px",borderRadius:10,display:"inline-block",fontWeight:700}}>🔔 Recordatorios ON</div>}
         </div>
