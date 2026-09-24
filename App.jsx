@@ -275,7 +275,7 @@ function MasterPanel({onLogout}) {
                         <Btn onClick={()=>toggleActivo(t.id,t.activo)} color={t.activo?"#ef4444":"#16a34a"}>
                           {t.activo?"Desactivar":"Activar"}
                         </Btn>
-                        <a href={`/panel?tenant=${t.id}`} target="_blank" rel="noreferrer">
+                        <a href={`/?tenant=${t.id}`} target="_blank" rel="noreferrer">
                           <Btn color="#2563eb">Ver panel</Btn>
                         </a>
                       </div>
