@@ -12,7 +12,7 @@ const LogoPedidone = ({ height = 40, dark = false }) => (
   <div style={{fontFamily:"system-ui,sans-serif",fontWeight:800,fontSize:height*1.5,letterSpacing:"-1px",lineHeight:1,whiteSpace:"nowrap",color:dark?"#fff":"#14302A",display:"inline-flex",alignItems:"center"}}>
     <span style={{fontWeight:300}}>Pedi</span>
     <span>d</span>
-    <svg width={height*0.55} height={height*0.55} viewBox="0 0 120 120" style={{display:"inline-block",verticalAlign:"-0.07em",margin:"0 1px"}} aria-hidden="true">
+   <svg width={height*0.85} height={height*0.85} viewBox="0 0 120 120" style={{display:"inline-block",verticalAlign:"-0.07em",margin:"0 1px"}} aria-hidden="true">
       <circle cx="60" cy="56" r="52" fill="#1FB86A"/>
       <path d="M22 88 L14 116 L48 104 Z" fill="#1FB86A"/>
       <g transform="translate(4,-1)" fill="none" stroke="#FFFFFF" strokeWidth="9" strokeLinecap="round" strokeLinejoin="round">
