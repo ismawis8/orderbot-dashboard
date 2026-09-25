@@ -1,6 +1,23 @@
 import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@supabase/supabase-js";
-
+// ── Logo Pedidone ─────────────────────────────────────────────
+const LogoPedidone = ({ height = 40, dark = false }) => (
+  <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
+    <div style={{fontFamily:"'Hanken Grotesk',system-ui,sans-serif",fontWeight:800,fontSize:height*1.8,letterSpacing:"-2px",lineHeight:1,whiteSpace:"nowrap",color:dark?"#fff":"#14302A"}}>
+      <span style={{fontWeight:300}}>Pedi</span>
+      <span style={{letterSpacing:0}}>d</span>
+      <svg width={height*0.6} height={height*0.6} viewBox="0 0 120 120" style={{display:"inline-block",verticalAlign:"-0.07em",margin:"0 1px"}} aria-hidden="true">
+        <circle cx="60" cy="56" r="52" fill="#1FB86A"/>
+        <path d="M22 88 L14 116 L48 104 Z" fill="#1FB86A"/>
+        <g transform="translate(4,-1)" fill="none" stroke="#FFFFFF" strokeWidth="9" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M28 60 L40 72 L66 42"/>
+          <path d="M53 67 L58 72 L84 42"/>
+        </g>
+      </svg>
+      <span style={{color:dark?"#fff":"#14302A"}}>ne</span>
+    </div>
+  </div>
+);
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const BOT_URL      = import.meta.env.VITE_BOT_BASE_URL || "";
