@@ -1,29 +1,29 @@
 import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@supabase/supabase-js";
-// ── Logo Pedidone ─────────────────────────────────────────────
-const LogoPedidone = ({ height = 40, dark = false }) => (
-  <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
-    <div style={{fontFamily:"'Hanken Grotesk',system-ui,sans-serif",fontWeight:800,fontSize:height*1.8,letterSpacing:"-2px",lineHeight:1,whiteSpace:"nowrap",color:dark?"#fff":"#14302A"}}>
-      <span style={{fontWeight:300}}>Pedi</span>
-      <span style={{letterSpacing:0}}>d</span>
-      <svg width={height*0.6} height={height*0.6} viewBox="0 0 120 120" style={{display:"inline-block",verticalAlign:"-0.07em",margin:"0 1px"}} aria-hidden="true">
-        <circle cx="60" cy="56" r="52" fill="#1FB86A"/>
-        <path d="M22 88 L14 116 L48 104 Z" fill="#1FB86A"/>
-        <g transform="translate(4,-1)" fill="none" stroke="#FFFFFF" strokeWidth="9" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M28 60 L40 72 L66 42"/>
-          <path d="M53 67 L58 72 L84 42"/>
-        </g>
-      </svg>
-      <span style={{color:dark?"#fff":"#14302A"}}>ne</span>
-    </div>
-  </div>
-);
+
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const BOT_URL      = import.meta.env.VITE_BOT_BASE_URL || "";
 const MASTER_EMAIL = import.meta.env.VITE_MASTER_EMAIL || "";
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+// ── Logo Pedidone ─────────────────────────────────────────────
+const LogoPedidone = ({ height = 40, dark = false }) => (
+  <div style={{fontFamily:"system-ui,sans-serif",fontWeight:800,fontSize:height*1.5,letterSpacing:"-1px",lineHeight:1,whiteSpace:"nowrap",color:dark?"#fff":"#14302A",display:"inline-flex",alignItems:"center"}}>
+    <span style={{fontWeight:300}}>Pedi</span>
+    <span>d</span>
+    <svg width={height*0.55} height={height*0.55} viewBox="0 0 120 120" style={{display:"inline-block",verticalAlign:"-0.07em",margin:"0 1px"}} aria-hidden="true">
+      <circle cx="60" cy="56" r="52" fill="#1FB86A"/>
+      <path d="M22 88 L14 116 L48 104 Z" fill="#1FB86A"/>
+      <g transform="translate(4,-1)" fill="none" stroke="#FFFFFF" strokeWidth="9" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M28 60 L40 72 L66 42"/>
+        <path d="M53 67 L58 72 L84 42"/>
+      </g>
+    </svg>
+    <span>ne</span>
+  </div>
+);
+
 
 // ── Utils ─────────────────────────────────────────────────────
 const fmt    = n  => new Intl.NumberFormat("es-ES",{style:"currency",currency:"EUR"}).format(n??0);
@@ -80,7 +80,7 @@ function LoginPage({onLogin}) {
   return (
     <div style={{minHeight:"100vh",background:"#0f172a",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Segoe UI',system-ui,sans-serif"}}>
       <div style={{background:"#1e293b",borderRadius:16,padding:"44px 40px",width:"100%",maxWidth:400,boxShadow:"0 20px 60px rgba(0,0,0,.4)"}}>
-        <img src="/logo.png" alt="Pedidone" style={{height:40,marginBottom:4}}/>
+        <LogoPedidone height={24} dark/>
         <div style={{color:"rgba(255,255,255,.4)",fontSize:13,marginBottom:32}}>Panel de gestión de pedidos</div>
 
         <label style={{display:"block",fontSize:12,fontWeight:600,color:"rgba(255,255,255,.5)",marginBottom:6}}>Email</label>
@@ -200,28 +200,25 @@ function MasterPanel({onLogout}) {
 
   useEffect(() => { cargar(); }, [cargar]);
 
-const crearCliente = async () => {
-    if (!form.nombre||!form.telefono||!form.email||!form.pass) {
-      showToast("Rellena todos los campos obligatorios","error"); return;
-    }
+  const crearCliente = async () => {
+    if (!form.nombre||!form.telefono||!form.email||!form.pass) { showToast("Rellena todos los campos obligatorios","error"); return; }
     setLoading(true);
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/admin/crear-cliente`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${import.meta.env.VITE_MASTER_SECRET}`,
-        },
-        body: JSON.stringify({
-          nombre: form.nombre, telefono: form.telefono,
-          phone_id: form.phone_id, token: form.token,
-          email: form.email, pass: form.pass,
-          bienvenida: form.bienvenida,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
-      showToast(`✅ Cliente "${form.nombre}" creado correctamente`);
+      // 1. Crear tenant
+      const { data: tenant, error: tErr } = await supabase.from("tenants").insert({
+        nombre: form.nombre,
+        telefono_negocio: form.telefono,
+        whatsapp_phone_id: form.phone_id || "PENDIENTE",
+        whatsapp_token: form.token || "PENDIENTE",
+        mensaje_bienvenida: form.bienvenida || `¡Bienvenido/a a *${form.nombre}*! Aquí puedes hacer tu pedido fácilmente.`,
+        pago_online_activo: false,
+        recordatorios_activos: false,
+      }).select().single();
+      if (tErr) throw tErr;
+
+      // 2. Crear usuario en Supabase Auth via Admin API (necesita service_role en backend)
+      // Por ahora lo creamos manualmente y vinculamos
+      showToast(`✅ Tenant "${form.nombre}" creado. Crea el usuario en Supabase Auth y vincúlalo.`);
       setForm({ nombre:"", telefono:"", phone_id:"", token:"", email:"", pass:"", bienvenida:"" });
       setVista("tenants");
       await cargar();
@@ -244,7 +241,7 @@ const crearCliente = async () => {
       {/* Header */}
       <div style={{background:"#0f172a",padding:"16px 28px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
         <div>
-          <img src="/logo.png" alt="Pedidone" style={{height:32,filter:"brightness(0) invert(1)"}}/>
+          <LogoPedidone height={18} dark/>
           <span style={{color:"rgba(255,255,255,.4)",fontSize:13,marginLeft:12}}>Panel Master</span>
         </div>
         <div style={{display:"flex",gap:10,alignItems:"center"}}>
@@ -295,7 +292,7 @@ const crearCliente = async () => {
                         <Btn onClick={()=>toggleActivo(t.id,t.activo)} color={t.activo?"#ef4444":"#16a34a"}>
                           {t.activo?"Desactivar":"Activar"}
                         </Btn>
-                        <a href={`/?tenant=${t.id}`} target="_blank" rel="noreferrer">
+                        <a href={`/panel?tenant=${t.id}`} target="_blank" rel="noreferrer">
                           <Btn color="#2563eb">Ver panel</Btn>
                         </a>
                       </div>
@@ -455,7 +452,7 @@ function Dashboard({tenantId, onLogout}) {
 
       <aside style={{width:215,background:"#0f172a",display:"flex",flexDirection:"column",position:"fixed",top:0,left:0,bottom:0,zIndex:50}}>
         <div style={{padding:"22px 18px 16px",borderBottom:"1px solid rgba(255,255,255,.07)"}}>
-          <div style={{display:"flex",alignItems:"center",gap:8}}>   <img src="/logo.png" alt="Pedidone" style={{height:24,filter:"brightness(0) invert(1)"}}/>   <span style={{fontSize:13,color:"rgba(255,255,255,.7)",fontWeight:600}}>{tenant?.nombre||"Panel"}</span> </div>
+          <div style={{display:"flex",flexDirection:"column",gap:2}}><LogoPedidone height={13} dark/><span style={{fontSize:11,color:"rgba(255,255,255,.4)",marginTop:2}}>{tenant?.nombre||"Panel"}</span></div>
           <div style={{fontSize:10,color:"rgba(255,255,255,.35)",marginTop:3}}>Panel de pedidos</div>
           {tenant?.recordatorios_activos&&<div style={{marginTop:6,fontSize:10,background:"#16a34a22",color:"#4ade80",padding:"2px 8px",borderRadius:10,display:"inline-block",fontWeight:700}}>🔔 Recordatorios ON</div>}
         </div>
