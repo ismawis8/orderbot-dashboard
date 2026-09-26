@@ -526,6 +526,7 @@ function Dashboard({tenantId, onLogout}) {
                   <option value="">Todos los orígenes</option>
                   <option value="whatsapp">📱 WhatsApp</option>
                   <option value="tienda">🏪 Tienda</option>
+                  <option value="web">🌐 Web</option>
                 </select>
               </div>
               <div style={{background:"#fff",borderRadius:12,overflow:"hidden",boxShadow:"0 1px 3px rgba(0,0,0,.06)"}}>
@@ -551,7 +552,7 @@ function Dashboard({tenantId, onLogout}) {
               <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
                 <Card title="📍 Por local"><Barras items={locales.map((l,i)=>({label:l.nombre,valor:activos.filter(p=>p.local_nombre===l.nombre).length,color:["#2563eb","#d97706"][i%2]}))} max={activos.length}/></Card>
                 <Card title="🛍️ Productos más pedidos"><Barras items={(()=>{const t={};activos.forEach(p=>(p.lineas||[]).forEach(l=>{t[l.producto]=(t[l.producto]||0)+l.cantidad;}));return Object.entries(t).sort((a,b)=>b[1]-a[1]).map(([n,v],i)=>({label:n,valor:v,color:["#2563eb","#7c3aed","#d97706","#16a34a","#ef4444"][i%5]}));})()}/></Card>
-                <Card title="📱 Origen"><Barras items={[{label:"📱 WhatsApp",valor:activos.filter(p=>p.origen==="whatsapp").length,color:"#25d366"},{label:"🏪 Tienda",valor:activos.filter(p=>p.origen==="tienda").length,color:"#2563eb"}]} max={activos.length}/></Card>
+                <Card title="📱 Origen"><Barras items={[{label:"📱 WhatsApp",valor:activos.filter(p=>p.origen==="whatsapp").length,color:"#25d366"},{label:"🏪 Tienda",valor:activos.filter(p=>p.origen==="tienda").length,color:"#2563eb"},{label:"🌐 Web",valor:activos.filter(p=>p.origen==="web").length,color:"#7c3aed"}]} max={activos.length}/></Card>
                 <Card title="💳 Métodos de pago"><Barras items={["local","efectivo","tarjeta","online"].map((m,i)=>({label:PAGO_LABELS[m],valor:activos.filter(p=>p.pago_metodo===m).length,color:["#64748b","#16a34a","#2563eb","#7c3aed"][i]}))} max={activos.length}/></Card>
               </div>
             </div>
@@ -603,7 +604,7 @@ function Tabla({pedidos,locales,onVer,onCambiar,soloHora=false}) {
             <tr key={p.id} style={{borderBottom:"1px solid #f5f5f5"}}>
               <td style={{padding:"11px 14px"}}>
                 <div style={{fontWeight:800,color:"#111"}}>#{String(p.numero_pedido).padStart(4,"0")}</div>
-                <span style={{fontSize:10,fontWeight:700,padding:"1px 6px",borderRadius:10,background:p.origen==="tienda"?"#dbeafe":"#dcfce7",color:p.origen==="tienda"?"#1d4ed8":"#15803d"}}>{p.origen==="tienda"?"🏪 Tienda":"📱 WhatsApp"}</span>
+                <span style={{fontSize:10,fontWeight:700,padding:"1px 6px",borderRadius:10,background:p.origen==="tienda"?"#dbeafe":"#dcfce7",color:p.origen==="tienda"?"#1d4ed8":"#15803d"}}>{p.origen==="tienda"?"🏪 Tienda":p.origen==="web"?"🌐 Web":"📱 WhatsApp"}</span>
               </td>
               <td style={{padding:"11px 14px",fontWeight:600}}>{p.cliente_nombre}</td>
               <td style={{padding:"11px 14px"}}><a href={`https://wa.me/${p.cliente_telefono}`} target="_blank" rel="noreferrer" style={{color:"#25d366",textDecoration:"none",fontWeight:500,fontSize:12}}>📱 {p.cliente_telefono}</a></td>
